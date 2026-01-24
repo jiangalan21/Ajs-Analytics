@@ -19,6 +19,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /var/www  # Change this to your actual project path
+            cd /var/www
             git pull origin main
             sudo systemctl restart apache2
