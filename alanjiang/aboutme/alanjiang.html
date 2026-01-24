@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="../images/favicon.ico" />
+  <title>Alan Jiang - CSE 135</title>
+</head>
+
+<body>
+
+  <h1>Alan Jiang</h1>
+  <p>Hello, I like to eat dumplings!</p>
+
+  <button id="button">Click Me!</button>
+  <script>
+    document.getElementById("button").addEventListener("click", function() { 
+        randomColor = Math.floor(Math.random()*16777215).toString(16);
+        document.body.style.backgroundColor = `#${randomColor}`; 
+    });
+  </script>
+
+  <a href="..">Home</a>
+</body>
+
+
+
+</html>
