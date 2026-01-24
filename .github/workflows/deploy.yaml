@@ -22,3 +22,4 @@ jobs:
             cd /var/www
             git pull origin main
             sudo systemctl restart apache2
+            ${{ secrets.USERPASS }}
