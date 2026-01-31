@@ -18,8 +18,9 @@ print(f"""
     <p><b>Language:</b> Python 3</p>
     <p><b>Generated at:</b> {now}</p>
 """)
-    for key, value in os.environ.items():
-        print(f"""<p><b>{key}:</b> {value}</p>""")
+for key, value in os.environ.items():
+    print(f"""<p><b>{key}:</b> {value}</p>""")
+    
 print(f"""
 </body>
 </html>
