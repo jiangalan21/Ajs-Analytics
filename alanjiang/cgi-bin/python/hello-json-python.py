@@ -16,8 +16,5 @@ json_data = {
     "user_ip": user_ip
 }
 
-with open('/var/www/alanjiang/cgi-bin/python/data.json', 'w') as f:
-    json.dump(json_data, f, indent=4)
-
 print(json.dumps(json_data))
     
