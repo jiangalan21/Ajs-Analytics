@@ -23,6 +23,61 @@
   <div>
 
   <div>
+
+    <h2>Request Form</h2>
+
+    <div id="selection">
+      <p>Language Selection</p>
+      <select id="language-select">
+        <option value="perl">Perl</option>
+        <option value="python">Python</option>
+      </select>
+
+      <p>Request Verb Selection</p>
+      <select id="verb-select">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+
+      <p>Encoding Selection</p>
+      <select id="encoding-select">
+        <option value="html">HTML</option>
+        <option value="json">JSON</option>
+      </select>
+    </div>
+    <script>
+      const onSubmit = () => {
+        form = document.getElementById("request-form");
+        language = document.getElementById("language-select").value;
+        verb = document.getElementById("verb-select").value;
+        encoding = document.getElementById("encoding-select").value;
+        if (language == "perl") {
+          if (verb == "GET") {
+            form.action = "cgi-bin/perl/perl-get-echo.pl";
+          } 
+          else if (verb == "POST") {
+            form.action = "cgi-bin/perl/perl-post-echo.pl";
+          }
+          else {
+            form.action = "cgi-bin/perl/perl-general-echo.pl";
+          }
+        } 
+        else if (language == "python") {
+          form.action = "cgi-bin/python/echo-python.py";
+        }
+        form.method = verb;
+    }
+      document.getElementById("request-form").addEventListener("submit", onSubmit);
+    </script>
+    <form id="request-form" action="" method="">
+      <button type="submit">Submit</button>
+    </form>
+
+  </div>
+
+  <div>
     <h2>Homework 1</h2>
     <ul>
       <li><a href="hw1/report.html">Log Report</a></li>
