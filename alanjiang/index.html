@@ -46,32 +46,18 @@
         <option value="html">HTML</option>
         <option value="json">JSON</option>
       </select>
+
+      <p>JavaScript Switch</p>
+      <select id="javascript-select">
+        <option value="on">on</option>
+        <option value="off">off</option>
+      </select>
     </div>
-    <script>
-      const onSubmit = () => {
-        form = document.getElementById("request-form");
-        language = document.getElementById("language-select").value;
-        verb = document.getElementById("verb-select").value;
-        encoding = document.getElementById("encoding-select").value;
-        if (language == "perl") {
-          if (verb == "GET") {
-            form.action = "cgi-bin/perl/perl-get-echo.pl";
-          } 
-          else if (verb == "POST") {
-            form.action = "cgi-bin/perl/perl-post-echo.pl";
-          }
-          else {
-            form.action = "cgi-bin/perl/perl-general-echo.pl";
-          }
-        } 
-        else if (language == "python") {
-          form.action = "cgi-bin/python/echo-python.py";
-        }
-        form.method = verb;
-    }
-      document.getElementById("request-form").addEventListener("submit", onSubmit);
-    </script>
-    <form id="request-form" action="" method="">
+    <script src="script.js"></script>
+    <form id="request-form" action="cgi-bin/perl/perl-general-echo.pl" method="POST" enctype="application/x-www-form-urlencoded">
+      <input type="text" name="Name" placeholder="Enter your name here" />
+      <input type="text" name="Email" placeholder="Enter your email here" />
+      <input type="text" name="Ice-cream" placeholder="Enter your favorite ice cream flavor here" />
       <button type="submit">Submit</button>
     </form>
 
