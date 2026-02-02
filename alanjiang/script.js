@@ -56,6 +56,7 @@ const onSubmit = (event) => {
           makeJson(formData, event);
         } else {
           form.enctype = "application/x-www-form-urlencoded";
+          form.submit();
         }
     }
 
