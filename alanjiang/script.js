@@ -29,6 +29,8 @@ const onSubmit = (event) => {
         if (document.getElementById("javascript-select").value == "off"){
             return;
         }
+
+        event.preventDefault();
         form = document.getElementById("request-form");
         language = document.getElementById("language-select").value;
         verb = document.getElementById("verb-select").value;
