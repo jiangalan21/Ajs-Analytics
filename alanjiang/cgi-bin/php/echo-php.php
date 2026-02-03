@@ -18,7 +18,17 @@ header("Content-Type: text/html");
 ?>
 <!DOCTYPE html>
 <html>
-<head><title>PHP Echo</title></head>
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RV2EXKKC1Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RV2EXKKC1Q');
+</script>
+<title>PHP Echo</title></head>
 <body>
     <h1>PHP Request Echo</h1>
     <hr>

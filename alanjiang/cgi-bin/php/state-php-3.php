@@ -6,6 +6,15 @@ $generated_at = $_COOKIE['generated_at'] ?? 'No timestamp found.';
 header("Content-Type: text/html");
 ?>
 <html>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RV2EXKKC1Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RV2EXKKC1Q');
+</script>
 <body>
     <h1>Session State</h1>
     <p>Stored Data: <b><?php echo htmlspecialchars($display_val); ?></b></p>

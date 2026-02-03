@@ -11,7 +11,10 @@ user_ip = os.environ.get('REMOTE_ADDR', 'Unknown')
 print(f"""
 <!DOCTYPE html>
 <html>
-<head><title>Hello Python</title></head>
+<head>
+<script src="https://cdn.logr-in.com/LogRocket.min.js" crossorigin="anonymous"></script>
+  <script>window.LogRocket && window.LogRocket.init("32jtwe/digitalocean135");</script>
+<title>Hello Python</title></head>
 <body>
     <h1>Greetings from Alan!</h1>
     <form action="state-python-2.py" method="POST">

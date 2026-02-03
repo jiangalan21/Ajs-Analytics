@@ -5,7 +5,15 @@ print "Content-type: text/html \n\n";
 # print HTML file top
 print <<END;
 <!DOCTYPE html>
-<html><head><title>GET Request Echo</title>
+<html><head><!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RV2EXKKC1Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RV2EXKKC1Q');
+</script><title>GET Request Echo</title>
 </head><body><h1 align="center">Get Request Echo</h1>
 <hr>
 END

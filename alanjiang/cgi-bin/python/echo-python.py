@@ -26,7 +26,17 @@ query_string = os.environ.get('QUERY_STRING', '')
 print(f"""
 <!DOCTYPE html>
 <html>
-<head><title>Python Echo</title></head>
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RV2EXKKC1Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RV2EXKKC1Q');
+</script>
+<title>Python Echo</title></head>
 <body>
     <h1>Python Request Echo</h1>
     <hr>

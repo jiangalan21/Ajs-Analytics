@@ -15,6 +15,15 @@ $session->delete();
 
 print "<html>";
 print "<head>";
+print "<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RV2EXKKC1Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RV2EXKKC1Q');
+</script>";
 print "<title>Perl Session Destroyed</title>";
 print "</head>";
 print "<body>";
