@@ -10,9 +10,11 @@ print <<END;
 <hr>
 END
 
+$method = $ENV{HTTP_X_HTTP_METHOD_OVERRIDE} || $ENV{REQUEST_METHOD} || 'GET';
+$method = uc($method);
 # HTTP Protocol, HTTP Method, and the Query String are all environment variables
 print "<p><b>HTTP Protocol:</b> $ENV{SERVER_PROTOCOL}</p>";
-print "<p><b>HTTP Method:</b> $ENV{REQUEST_METHOD}</p>";
+print "<p><b>HTTP Method:</b> $method</p>";
 print "<p><b>Query String:</b> $ENV{QUERY_STRING}</p>";
 
 $date = localtime();

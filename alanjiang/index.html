@@ -2,12 +2,22 @@
 <html lang="en">
 
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RV2EXKKC1Q"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-RV2EXKKC1Q');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
   <link rel="stylesheet" href="style.css" />
   <title>CSE 135</title>
 </head>
+
 
 <body>
   
@@ -33,6 +43,8 @@
           <select id="language-select">
             <option value="perl" selected>Perl</option>
             <option value="python">Python</option>
+            <option value="php">PHP</option>
+            <option value="go">Go</option>
           </select>
         </div>
 
@@ -110,7 +122,26 @@
         <li><a href="cgi-bin/python/state-python-1.py">Sessions 1 Python</a></li>
         <li><a href="cgi-bin/python/state-python-3.py">Sessions 2 Python</a></li>  
       </ul>
-    </div>
+
+      <p>PHP</p>
+      <ul>
+        <li><a href="cgi-bin/php/hello-html-php.php">Hello HTML PHP</a></li>
+        <li><a href="cgi-bin/php/hello-json-php.php">Hello JSON PHP</a></li>
+        <li><a href="cgi-bin/php/environment-php.php">Environment Variables PHP</a></li>
+        <li><a href="cgi-bin/php/echo-php.php">Echo PHP</a></li>
+        <li><a href="cgi-bin/php/state-php-1.php">Sessions 1 PHP</a></li>
+        <li><a href="cgi-bin/php/state-php-3.php">Sessions 2 PHP</a></li>
+      </ul>
+
+      <p>Go</p>
+      <ul>
+        <li><a href="cgi-bin/go/hello-html-go">Hello HTML Go</a></li>
+        <li><a href="cgi-bin/go/hello-json-go">Hello JSON Go</a></li>
+        <li><a href="cgi-bin/go/environment-go">Environment Variables Go</a></li>
+        <li><a href="cgi-bin/go/echo-go">Echo Go</a></li>
+        <li><a href="cgi-bin/go/state-go-1">Sessions 1 Go</a></li>
+        <li><a href="cgi-bin/go/state-go-3">Sessions 2 Go</a></li>
+      </div>
     
   </div>
 

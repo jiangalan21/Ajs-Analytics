@@ -8,12 +8,15 @@ my $date = localtime();
 my $ip = $ENV{REMOTE_ADDR};
 my $hostname = $ENV{HTTP_HOST};
 my $agent_header = $ENV{HTTP_USER_AGENT};
-my $method = $ENV{REQUEST_METHOD};
+my $method = $ENV{HTTP_X_HTTP_METHOD_OVERRIDE} || $ENV{REQUEST_METHOD} || 'GET';
+$method = uc($method);
 my $protocol = $ENV{SERVER_PROTOCOL};
 my $query_string = $ENV{QUERY_STRING};
 
-my $bytes_read = read STDIN, my $form_data, $ENV{CONTENT_LENGTH};
-
+my $formdata = "";
+if ($ENV{REQUEST_METHOD} ne 'GET'){
+    read(STDIN, $form_data, $ENV{CONTENT_LENGTH});
+}
 my %response = (
     hostname => $hostname,
     datetime => $date,

@@ -8,7 +8,7 @@ print("Content-Type: application/json")
 print()
 
 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-method = os.environ.get('REQUEST_METHOD', 'GET')
+method = os.environ.get('HTTP_X_HTTP_METHOD_OVERRIDE', os.environ.get('REQUEST_METHOD', 'GET')).upper()
 protocol = os.environ.get('SERVER_PROTOCOL', 'HTTP/1.1')
 user_agent = os.environ.get('HTTP_USER_AGENT', 'Unknown')
 user_ip = os.environ.get('REMOTE_ADDR', 'Unknown')
@@ -19,7 +19,9 @@ try:
 except ValueError:
     content_length = 0  
 
-body_data = sys.stdin.read(content_length) if content_length > 0 else ""
+body_data = ""
+if(method != "GET" and content_length > 0):
+    body_data = sys.stdin.read(content_length)
 query_string = os.environ.get('QUERY_STRING', '')
 
 response = {

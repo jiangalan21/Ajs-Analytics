@@ -8,7 +8,7 @@ print("Content-Type: text/html")
 print()
 
 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-method = os.environ.get('REQUEST_METHOD', 'GET')
+method = os.environ.get('HTTP_X_HTTP_METHOD_OVERRIDE', os.environ.get('REQUEST_METHOD', 'GET')).upper()
 protocol = os.environ.get('SERVER_PROTOCOL', 'HTTP/1.1')
 user_agent = os.environ.get('HTTP_USER_AGENT', 'Unknown')
 user_ip = os.environ.get('REMOTE_ADDR', 'Unknown')
