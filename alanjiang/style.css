@@ -2,3 +2,31 @@
     display: flex;
     gap: 10px;
 }
+
+#selection {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#forms-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1px;
+}
+
+#form-response {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+}
+
+#id-response-container {
+    margin: 50px;
+}

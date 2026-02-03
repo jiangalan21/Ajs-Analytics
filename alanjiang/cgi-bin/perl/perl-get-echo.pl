@@ -13,6 +13,15 @@ END
 # The Query String is simply an environment variable
 print "<b>Query String:</b> $ENV{QUERY_STRING}<br />\n";
 
+$date = localtime();
+$ip = $ENV{REMOTE_ADDR};
+$hostname = $ENV{HTTP_HOST};
+$agent_header = $ENV{HTTP_USER_AGENT};
+print "<p><b>Request Time:</b> $date</p>";
+print "<p><b>Client IP Address:</b> $ip</p>";
+print "<p><b>Server Hostname:</b> $hostname</p>";
+print "<p><b>User-Agent Header:</b> $agent_header</p>";
+
 # Credit for this code to parse the Query string:
 # https://www.mediacollege.com/internet/perl/query-string.html
 if (length ($ENV{'QUERY_STRING'}) > 0){

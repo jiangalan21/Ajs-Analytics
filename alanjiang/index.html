@@ -22,45 +22,57 @@
   
   <div>
 
-  <div>
+  
+  <h2>Request Form</h2>
+  <div id="form-response">
+    <div id="forms-container">
+      <div id="selection">
 
-    <h2>Request Form</h2>
+        <div class="form-group">
+          <p>Language Selection</p>
+          <select id="language-select">
+            <option value="perl" selected>Perl</option>
+            <option value="python">Python</option>
+          </select>
+        </div>
 
-    <div id="selection">
-      <p>Language Selection</p>
-      <select id="language-select">
-        <option value="perl" selected>Perl</option>
-        <option value="python">Python</option>
-      </select>
+        <div class="form-group">
+          <p>Request Verb Selection</p>
+          <select id="verb-select">
+            <option value="GET" selected>GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
 
-      <p>Request Verb Selection</p>
-      <select id="verb-select">
-        <option value="GET" selected>GET</option>
-        <option value="POST">POST</option>
-        <option value="PUT">PUT</option>
-        <option value="DELETE">DELETE</option>
-      </select>
+        <div class="form-group">
+          <p>Encoding Selection</p>
+          <select id="encoding-select">
+            <option value="html" selected>HTML</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
 
-      <p>Encoding Selection</p>
-      <select id="encoding-select">
-        <option value="html" selected>HTML</option>
-        <option value="json">JSON</option>
-      </select>
+        <div class="form-group">
+          <p>JavaScript Switch</p>
+          <select id="javascript-select">
+            <option value="on" selected>on</option>
+            <option value="off">off</option>
+          </select>
+        </div>
+      
+      </div>
 
-      <p>JavaScript Switch</p>
-      <select id="javascript-select">
-        <option value="on" selected>on</option>
-        <option value="off">off</option>
-      </select>
+      <script src="script.js"></script>
+      <form id="request-form" action="cgi-bin/perl/perl-general-echo.pl" method="POST" enctype="application/x-www-form-urlencoded">
+        <input type="text" id="Name" name="Name" placeholder="Enter your name here" />
+        <input type="text" id="Email" name="Email" placeholder="Enter your email here" />
+        <input type="text" id="Ice-cream" name="Ice-cream" placeholder="Enter your favorite ice cream flavor here" />
+      </form>
+      <button form="request-form" type="submit">Submit</button>
+      
     </div>
-    <script src="script.js"></script>
-    <form id="request-form" action="cgi-bin/perl/perl-general-echo.pl" method="POST" enctype="application/x-www-form-urlencoded">
-      <input type="text" name="Name" placeholder="Enter your name here" />
-      <input type="text" name="Email" placeholder="Enter your email here" />
-      <input type="text" name="Ice-cream" placeholder="Enter your favorite ice cream flavor here" />
-      <button type="submit">Submit</button>
-    </form>
-
   </div>
 
   <div>

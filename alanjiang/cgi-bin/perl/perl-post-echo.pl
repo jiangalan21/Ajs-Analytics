@@ -28,6 +28,15 @@ if (length ($form_data) > 0){
   }
 }
 
+$date = localtime();
+$ip = $ENV{REMOTE_ADDR};
+$hostname = $ENV{HTTP_HOST};
+$agent_header = $ENV{HTTP_USER_AGENT};
+print "<p><b>Request Time:</b> $date</p>";
+print "<p><b>Client IP Address:</b> $ip</p>";
+print "<p><b>Server Hostname:</b> $hostname</p>";
+print "<p><b>User-Agent Header:</b> $agent_header</p>";
+
 print "<b>Message Body:</b><br />\n";
 print "<ul>\n";
 
