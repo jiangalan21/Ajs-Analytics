@@ -37,7 +37,10 @@ const onSubmit = (event) => {
         encoding = document.getElementById("encoding-select").value;
         if (language == "perl") {
           if (verb == "GET") {
-            form.action = "cgi-bin/perl/perl-get-echo.pl";
+            form.action = `cgi-bin/perl/perl-get-echo.pl?
+            Name=${document.getElementById("Name").value}&
+            Email=${document.getElementById("Email").value}&
+            Ice-cream=${document.getElementById("Ice-cream").value}`;
           } 
           else if (verb == "POST") {
             form.action = "cgi-bin/perl/perl-post-echo.pl";
@@ -47,7 +50,15 @@ const onSubmit = (event) => {
           }
         } 
         else if (language == "python") {
-          form.action = "cgi-bin/python/echo-python.py";
+          if (verb == "GET") {
+            form.action = `cgi-bin/python/python-get-echo.py?
+            Name=${document.getElementById("Name").value}&
+            Email=${document.getElementById("Email").value}&
+            Ice-cream=${document.getElementById("Ice-cream").value}`;
+          } 
+          else {  
+            form.action = "cgi-bin/python/echo-python.py";
+          }
         }
         form.method = verb;
         
