@@ -19,8 +19,8 @@ header("Content-Type: text/html");
 <body>
     <h1>Greetings from Alan!</h1>
     <form action="state-php-2.php" method="POST">
-        <label>What would you like to save?</label>
-        <input type="text" name="user_data" placeholder="enter message" required>
+        <label for="user_data">User Data:</label>
+        <input type="text" id="user_data" name="user_data" placeholder="enter message" required>
         <input type="hidden" name="user_ip" value="<?php echo htmlspecialchars($user_ip); ?>">
         <input type="hidden" name="generated_at" value="<?php echo $now; ?>">
         <button type="submit">Submit</button>
