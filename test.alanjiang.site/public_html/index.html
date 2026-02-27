@@ -13,26 +13,8 @@
 
 <hr>
 
-<h2>Contact Form</h2>
-<form action="#" method="post">
-  <p>
-    <label for="name">Name:</label><br>
-    <input type="text" id="name" name="name">
-  </p>
-  <p>
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email">
-  </p>
-  <p>
-    <label for="message">Message:</label><br>
-    <textarea id="message" name="message" rows="4" cols="40"></textarea>
-  </p>
-  <p>
-    <input type="submit" value="Submit">
-  </p>
-</form>
-
-<hr>
+<h2>Error</h2>
+<button id="error-button" onClick="throw new Error('Test error');">Click</button>
 
 <h2>Search Form</h2>
 <form action="#" method="get">
