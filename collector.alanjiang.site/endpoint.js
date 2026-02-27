@@ -7,24 +7,28 @@ const PORT = 3000;
 const LOG_FILE = path.join(__dirname, 'analytics.jsonl');
 
 
-app.use(express.json());
-
-app.use(express.static(__dirname));
-
 // CORS middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  // no-cache enabled
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
   }
   next();
 });
 
+app.use(express.json());
+app.use(express.static(__dirname));
+
 // sendBeacon endpoint
 app.post('/collect', (req, res) => {
-    const payload = req.body;
+    let payload = req.body;
 
     if (!payload || !payload.url || !payload.type) {
         return res.status(400).json({ error: 'Missing required fields: url, type' });
