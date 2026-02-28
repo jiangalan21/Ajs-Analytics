@@ -3,17 +3,48 @@
 
     const endpoint = "https://www.collector.alanjiang.site/collect"
 
+    let config = {
+        endpoint: endpoint,
+    };
+    let initialized = false;
+    const properties = {};
+    let userId = null;
+    const extensions = {};
+    const queue = [];
+
+    const SESSION_ID = (() => {
+        let sid = sessionStorage.getItem('_collector_sid');
+        if (!sid) {
+            sid = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        }
+        sessionStorage.setItem('_collector_sid', sid);
+        set('sessionId', sid);
+        return sid;
+    })();
+
+    function log(...args) {
+        if (config.debug) {
+            console.log('[Collector]', ...args);
+        }
+    }
+
+    function warn(...args) {
+        console.warn('[Collector]', ...args);
+    }
+
     function round(n) {
         return Math.round(n * 100) / 100;
     }
 
+    function merge(target, source) {
+    for (const key of Object.keys(source)) {
+      target[key] = source[key];
+    }
+    return target;
+  }
+
     function getSessionId() {
-        let sid = sessionStorage.getItem('_collector_sid');
-        if (!sid) {
-            sid = Math.random().toString(36).substring(2) + Date.now().toString(36);
-            sessionStorage.setItem('_collector_sid', sid);
-        }
-        return sid;
+        return SESSION_ID;
     }
 
     function getStatic() {
@@ -82,114 +113,241 @@
         }
     }
     
+    
     function initErrorTracking() {
-        
-        window.addEventListener('error', (event) => {
-            if (event instanceof ErrorEvent) {
-                // JavaScript runtime error
-                reportError({
-                    type: 'js-error',
-                    message: event.message,
-                    source: event.filename,
-                    line: event.lineno,
-                    column: event.colno,
-                    stack: event.error ? event.error.stack : '',
-                    url: window.location.href
-                });
-            } else {
-                // Resource load failure (IMG, SCRIPT, LINK)
-                const target = event.target;
-                if (target && (target.tagName === 'IMG' || target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
-                    reportError({
-                        type: 'resource-error',
-                        tagName: target.tagName,
-                        src: target.src || target.href || '',
-                        url: window.location.href
-                    });
-                }
-            }
-            }, true); // capture phase required for resource errors
 
-            // Unhandled promise rejections
-            window.addEventListener('unhandledrejection', (event) => {
-            const reason = event.reason;
-            reportError({
-                type: 'promise-rejection',
-                message: reason instanceof Error ? reason.message : String(reason),
-                stack: reason instanceof Error ? reason.stack : '',
-                url: window.location.href
+        let errorCount = 0;
+        const reportedErrors = new Set();
+
+        window.onerror = function(message, source, lineno, colno, error) {
+
+            const key = `${error.type}:${error.message}:${error.source || ''}:${error.line || ''}`;
+            if (reportedErrors.has(key)) return;
+            reportedErrors.add(key);
+            errorCount++;
+
+            track('error', {
+                message: message,
+                source: source,
+                lineno: lineno,
+                colno: colno,
+                stack: error && error.stack ? error.stack.substring(0, 1000) : ''
+            });
+        };
+
+        window.addEventListener('unhandledrejection', (event) => {
+            track('unhandled_rejection', {
+                reason: String(event.reason).substring(0, 500)
             });
         });
 
         console.log('Error tracking initialized');
     }
 
-    const reportedErrors = new Set();
-    const MAX_ERRORS = 10;
-    let errorCount = 0;
-
-    function reportError(errorData) {
-        // Rate limit: max errors per page load
-        if (errorCount >= MAX_ERRORS) {
-            console.log(`Error rate limit reached (${MAX_ERRORS}), ignoring:`, errorData.message);
+    function init(options) {
+        if (initialized) {
+            warn('collector.init() called more than once');
             return;
         }
 
-        // Deduplicate by type + message + source + line
-        const key = `${errorData.type}:${errorData.message || ''}:${errorData.source || ''}:${errorData.line || ''}`;
-        if (reportedErrors.has(key)) {
-            console.log('Duplicate error suppressed:', errorData.message);
-            return;
+        if (options) {
+            // Merge user options with defaults
+            merge(config, options);
         }
-        reportedErrors.add(key);
-        errorCount++;
+        initialized = true;
 
-        console.log(`Error #${errorCount}:`, errorData.type, '-', errorData.message);
+        initKeyTracker();
 
-        // Send error beacon
-        const payload = {
-            type: 'error',
-            error: errorData,
-            timestamp: new Date().toISOString(),
-            url: window.location.href,
-            session: getSessionId()
-        };
+        initActivityTracker();
 
-        sendBeacon(payload);
+        initErrorTracking();
+        log('Initialized with config:', config);
 
-        // Dispatch custom event so test pages can display the error
-        window.dispatchEvent(new CustomEvent('collector:error', { detail: { errorData: errorData, count: errorCount } }));
+
+        if (document.readyState === "complete") {
+            setTimeout(() => {
+                collect();
+            }, 0);
+        } else {
+            window.addEventListener("load", () => {
+                setTimeout(() => {
+                    collect();
+                }, 0);
+            });
+        }
     }
 
+    function track(eventType, data) {
+        if (!initialized) {
+            warn('collector.track() called before init()');
+            return;
+        }
+        const payload = {
+            url: window.location.href,
+            timestamp: new Date().toISOString(),
+            type: eventType,
+            data: data || {}
+        };
+
+        merge(payload, properties);
+
+        if (userId) {
+            payload.userId = userId;
+        }
+
+        if (config.app) {
+            payload.app = config.app;
+        }
+
+        sendBeacon(payload);
+    }
+
+    function set(key, value) {
+        if (typeof key === 'object') {
+            merge(properties, key);
+        } else {
+            properties[key] = value;
+        }
+        log('Global property set:', key, '=', value);
+    }
+
+    function identify(id) {
+        userId = id;
+        log('User identified:', id);
+    }
+
+    // document.addEventListener('visibilitychange', () => {
+    //     if (document.visibilityState === 'hidden') {
+    //         //sum
+    //     }
+    // });
+
+    function initKeyTracker() {
+        let timeout = null;
+        const payload = {
+            key_string: ""
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.length > 1 && e.key !== "Backspace") return;
+            payload.key_string += e.key;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (payload.key_string.length > 0) {
+                    track("typing", payload);
+                    payload.key_string = "";
+                }
+            }, 1000);
+        })
+
+    }
+
+    function initActivityTracker() {
+        let lastActivity = Date.now();
+        const entryTime = Date.now();
+
+        // 1. Record Page Entry
+        track("page_entry");
+
+        const recordActivity = () => {
+            const now = Date.now();
+            const idleDuration = now - lastActivity;
+
+            // 2. Detect Idle Break (2 or more seconds)
+            if (idleDuration >= 2000) {
+                track("idle_break", {
+                    breakEndedAt: new Date(now).toISOString(),
+                    durationMs: idleDuration,
+                    message: "User was inactive"
+                });
+            }
+
+            lastActivity = now;
+        };
+
+        // Listen for common "active" signals
+        const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+        activityEvents.forEach(event => {
+            window.addEventListener(event, recordActivity, { passive: true });
+        });
+
+        // 3. Record Page Exit
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                track("page_exit");
+            }
+        });
+    }
+
+    function use(extension) {
+        if (!extension || !extension.name) {
+            warn('Extension must have a name property');
+            return;
+        }
+        if (extensions[extension.name]) {
+            warn(`Extension "${extension.name}" already registered`);
+            return;
+        }
+
+        extensions[extension.name] = extension;
+
+        // Call init, passing the collector's limited public API
+        if (typeof extension.init === 'function') {
+            extension.init({
+                track: track,
+                set: set,
+                getConfig: () => config,
+                getSessionId: getSessionId
+            });
+        }
+
+        log('Extension registered:', extension.name);
+    }
+
+    
     function collect() {
     
         const perfData = getPerformance();
 
         const payload = {
             url: window.location.href,
-            session: getSessionId(),
             title: document.title,
             referrer: document.referrer,
             timestamp: new Date().toISOString(),
             type: "static_pageview",
             static: getStatic(),
             performance: (perfData && perfData.total > 0) ? perfData : "unavailable",
-            activity: "non",
+        }
+
+        merge(payload, properties);
+
+        if (userId) {
+            payload.userId = userId;
+        }
+
+        if (config.app) {
+            payload.app = config.app;
         }
 
         sendBeacon(payload);
     }
 
     function sendBeacon(payload){
-        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-        
+        /** CHALLENGE POINT:
+         * Put the SessionId into the query string to be picked in logs
+        */
+        const url = `${config.endpoint}?_csid=${sessionStorage.getItem('_collector_sid')}`;
+        const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });       
 
         if (navigator.sendBeacon) {
-            const sent = navigator.sendBeacon(endpoint, blob);
-            if (sent) return;
-        } 
-
-        fetch(endpoint, {
+            const sent = navigator.sendBeacon(url, blob);
+            if (sent) {
+                log('Beacon sent via sendBeacon');
+                return;
+            }
+        }
+        warn('send beacon failed, trying fetch:', err.message);
+        fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -197,45 +355,28 @@
                 body: JSON.stringify(payload),
                 keepalive: true
         }).catch((err) => {
-            fetch(endpoint, {
+            warn('fetch failed, trying basic fetch:', err.message);
+        }).then(() => {
+            fetch (url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(payload)
-            }).catch(() => {});
+            })
+        }).catch((err) => {
+            warn(' fallback fetch:', err.message);
         });
+    
+        log('payload:', payload);
     }
 
-     initErrorTracking();
-
-    if (document.readyState === "complete") {
-        setTimeout(() => {
-            collect();
-            initKeyTracker();
-        }, 0);
-    } else {
-        window.addEventListener("load", () => {
-            setTimeout(() => {
-                collect();
-                initKeyTracker();
-            }, 0);
-        });
-    }
-
-    function initKeyTracker() {
-        document.querySelector('input').addEventListener('keydown', (e) => {
-            const payload = {
-                key: e.key,
-            }
-            sendBeacon(payload);
-        })
-    }
-
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') {
-            //sum
-        }
-    });
+    window.collector = {
+        init: init,
+        track: track,
+        set: set,
+        identify: identify,
+        use: use,
+    };
 
 })();
