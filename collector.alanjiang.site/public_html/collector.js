@@ -334,7 +334,7 @@
 
     function sendBeacon(payload){
         /** CHALLENGE POINT:
-         * Put the SessionId into the query string to be picked in logs
+         * Put the sessionId into the query string to be associated in logs
         */
         const url = `${config.endpoint}?_csid=${sessionStorage.getItem('_collector_sid')}`;
         const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });       

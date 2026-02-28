@@ -4,14 +4,14 @@
   <title>Alan Jiang Test Page</title>
   <!-- ANALYTICS SCRIPT GOES HERE -->
   <script src="https://www.collector.alanjiang.site/collector.js"></script>
-    <script src="https://www.collector.alanjiang.site/scroll.js"></script>
-    <script src="https://www.collector.alanjiang.site/clicker.js"></script>
+    <!-- <script src="https://www.collector.alanjiang.site/scroll.js"></script>
+    <script src="https://www.collector.alanjiang.site/clicker.js"></script> -->
     <script>
       collector.init({
         endpoint: 'https://www.collector.alanjiang.site/collect'
       });
-      collector.use(ScrollTracker)
-      collector.use(ClickTracker)
+      // collector.use(ScrollTracker)
+      // collector.use(ClickTracker)
     </script>
    <link rel="stylesheet" type="text/css" href="./styles.css">
 </head>
@@ -24,6 +24,23 @@
 
 <h2>Error</h2>
 <button id="error-button" onClick="throw new Error('Test error');">Click</button>
+
+<h2>Check DB</h2>
+<button id="check-db">Check DB</button>
+<script>
+  document.getElementById('check-db').addEventListener('click', () => { 
+    fetch('https://www.collector.alanjiang.site/events')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('db-response').textContent = `DB Response: ${JSON.stringify(data)}`;
+    })
+    .catch(err => {
+      console.error('error fetching DB response:', err);
+      document.getElementById('db-response').textContent = `DB Error: ${err.message}`;
+    });
+  });
+</script>
+<p id="db-response"></p>
 
 <h2>Search Form</h2>
 <form action="#" method="get">
