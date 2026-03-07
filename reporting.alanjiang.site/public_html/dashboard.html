@@ -15,7 +15,21 @@
     document.write(`Live @ ${new Date()}`);
   </script>
   <h2>Dashboard Data</h2>
-  <p id="performance-data"></p>
+  <table id="performance-table">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Avg Load (ms)</th>
+        <th>Avg TTFB (ms)</th>
+        <th>Avg LCP (s)</th>
+        <th>Avg CLS</th>
+        <th>Samples</th>
+      </tr>
+    </thead>
+    <tbody id="performance-tbody">
+      <!-- rows injected here -->
+    </tbody>
+  </table>
   <br></br>
   <div id="loadChart"></div>
   <div id="ttfbChart"></div>
@@ -32,7 +46,19 @@
         .then(payload => {
           const home = payload.data[0];
           const query = payload.data[1];
-          document.getElementById('performance-data').textContent = JSON.stringify([payload]);
+          const tbody = document.getElementById("performance-tbody");
+          payload.data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${row.url}</td>
+              <td>${row.avg_load_ms}</td>
+              <td>${row.avg_ttfb_ms}</td>
+              <td>${row.avg_lcp}</td>
+              <td>${row.avg_cls}</td>
+              <td>${row.samples}</td>
+            `;
+            tbody.appendChild(tr);
+          });
           const sites = ['avg_load_ms', 'avg_ttfb_ms'];
 
           let loadConfig = {
