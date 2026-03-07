@@ -28,15 +28,50 @@ const pool = new Pool({
     password: 'awesome21'
 });
 
+function getDateRange(query) {
+    const end = query.end || new Date().toISOString().slice(0, 10);
+    const start = query.start || new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+    return [start + ' 00:00:00+00', end + ' 23:59:59+00'];
+}
+    
+app.post('/api/login', loginRoute(pool));
 
-app.get('/', (req, res) => {
-    res.send("API is running!");
+app.post('/api/logout', logoutRoute);
+
+app.get('/api/dashboard', requireAuth, (req, res) => {
+    requireAuth(req, res, async () => {
+        try {
+            res.json({data: 'This is dashboard data'});
+        } catch (err) {
+            console.error('Error fetching dashboard data:', err);
+            res.status(500).json({ error: 'Failed to fetch dashboard data' });
+        }
+    });
 });
 
-app.post('/login', loginRoute(pool));
-app.post('/logout', logoutRoute);
+app.get('/api/performance', requireAuth, async (req, res) => {
+    try {
+        const [start, end] = getDateRange(req.query);
+        const { rows } = await pool.query(
+            `SELECT url,
+                    ROUND(AVG(load_time)) AS avg_load_ms,
+                    ROUND(AVG(ttfb)) AS avg_ttfb_ms,
+                    ROUND(AVG(lcp)::numeric, 2) AS avg_lcp,
+                    ROUND(AVG(cls)::numeric, 4) AS avg_cls,
+                    COUNT(*) AS samples
+             FROM performance
+             WHERE server_ts BETWEEN $1::TIMESTAMPTZ AND $2::TIMESTAMPTZ
+             GROUP BY url ORDER BY avg_load_ms DESC LIMIT 20`,
+            [start, end]
+        );
+        res.json({ success: true, data: rows });
+    } catch (err) {
+        console.error('Error fetching performance data:', err);
+        res.status(500).json({ error: 'Failed to fetch performance data' });
+    }
+});
 
-app.get('/events', async (req, res) => {
+app.get('/api/events', async (req, res) => {
   try {
     const { rows } = await pool.query(
         'SELECT * FROM events ORDER BY serverTimeStamp DESC LIMIT 3'

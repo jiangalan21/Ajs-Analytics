@@ -28,17 +28,17 @@
 <h2>Check DB</h2>
 <button id="check-db">Check DB</button>
 <script>
-  document.getElementById('check-db').addEventListener('click', () => { 
-    fetch('https://www.collector.alanjiang.site/events')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('db-response').textContent = `DB Response: ${JSON.stringify(data)}`;
-    })
-    .catch(err => {
-      console.error('error fetching DB response:', err);
-      document.getElementById('db-response').textContent = `DB Error: ${err.message}`;
-    });
-  });
+  // document.getElementById('check-db').addEventListener('click', () => { 
+  //   fetch('https://www.collector.alanjiang.site/')
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     document.getElementById('db-response').textContent = `DB Response: ${JSON.stringify(data)}`;
+  //   })
+  //   .catch(err => {
+  //     console.error('error fetching DB response:', err);
+  //     document.getElementById('db-response').textContent = `DB Error: ${err.message}`;
+  //   });
+  // });
 </script>
 <p id="db-response"></p>
 
@@ -83,28 +83,6 @@
   </p>
 </form>
 
-<hr>
-
-<h2>Login Form</h2>
-<form action="#" method="post">
-  <p>
-    <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username">
-  </p>
-  <p>
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password">
-  </p>
-  <p>
-    <input type="checkbox" id="remember" name="remember" value="yes">
-    <label for="remember">Remember me</label>
-  </p>
-  <p>
-    <input type="submit" value="Log In">
-  </p>
-</form>
-
-<hr>
 
 <p><a href="buttons-page.html">Go to Button Page</a></p>
 

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSE 135 HW Lives!</title>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+</head>
+
+<body>
+  <h1>CSE 135 HW4 Lives!</h1>
+  <h2>reporting.alanjiang.site dashboard</h2>
+  <script>
+    document.write(`Live @ ${new Date()}`);
+  </script>
+  <h2>Dashboard Data</h2>
+  <p id="performance-data"></p>
+  <br></br>
+  <div id="loadChart"></div>
+  <div id="ttfbChart"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+          fetch("/api/performance", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(response => response.json())
+        .then(payload => {
+          const home = payload.data[0];
+          const query = payload.data[1];
+          document.getElementById('performance-data').textContent = JSON.stringify([payload]);
+          const sites = ['avg_load_ms', 'avg_ttfb_ms'];
+
+          let loadConfig = {
+                type: 'bar',
+                title: {
+                  text: 'Performance Data',
+                  fontSize: 24,
+                },
+                legend: {
+                  draggable: true,
+                },
+                scaleX: {
+                  // Set scale label
+                  label: { text: 'Sites' },
+                  // Convert text on scale indices 
+                  labels: [sites[0]]
+                },
+                scaleY: { 
+                  // Scale label with unicode character 
+                  label: { text: 'ms' } },
+                  plot: { 
+                    // Animation docs here: 
+                    // https://www.zingchart.com/docs/tutorials/styling/animation#effect
+                    animation: { 
+                      effect: 'ANIMATION_EXPAND_BOTTOM',
+                      method: 'ANIMATION_STRONG_EASE_OUT',
+                      sequence: 'ANIMATION_BY_NODE',
+                      speed: 275,
+                    } 
+                },
+                series: [ 
+                  {
+                    // plot 1 values, linear data 
+                    values: [home.avg_load_ms],
+                    text: 'Home',
+                  },
+                  {
+                    // plot 2 values, linear data
+                    values: [query.avg_load_ms],
+                    text: 'Query'
+                  }
+                ]
+              };
+          zingchart.render({
+            id: 'loadChart',
+            data: loadConfig,
+          });
+
+          let ttfbConfig = {
+            type: 'bar',
+            title: {
+              text: 'Performance Data',
+              fontSize: 24,
+            },
+            legend: {
+              draggable: true,
+            },
+            scaleX: {
+              // Set scale label
+              label: { text: 'Sites' },
+              // Convert text on scale indices 
+              labels: [sites[1]]
+            },
+            scaleY: { 
+              // Scale label with unicode character 
+              label: { text: 'ms' } },
+              plot: { 
+                // Animation docs here: 
+                // https://www.zingchart.com/docs/tutorials/styling/animation#effect
+                animation: { 
+                  effect: 'ANIMATION_EXPAND_BOTTOM',
+                  method: 'ANIMATION_STRONG_EASE_OUT',
+                  sequence: 'ANIMATION_BY_NODE',
+                  speed: 275,
+                } 
+            },
+            series: [ 
+              {
+                // plot 1 values, linear data 
+                values: [home.avg_ttfb_ms],
+                text: 'Home',
+              },
+              {
+                // plot 2 values, linear data
+                values: [query.avg_ttfb_ms],
+                text: 'Query'
+              }
+            ]
+          };
+          zingchart.render({
+            id: 'ttfbChart',
+            data: ttfbConfig,
+          });
+        });
+      } catch (err) {
+        console.error("Error fetching performance data:", err);
+      }
+      //TODO: figure out how to block access to the whole page if not logged in
+    });
+  </script>
+  <button id="logout-button">Logout</button>
+  <script>
+    document.getElementById('logout-button').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        if (data && data.success) {
+          window.location.href = '/';
+        } else {
+          alert('Logout failed: ' + (data ? data.message : 'Unknown error'));
+        }
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+    });
+  </script>
+</body>
+
+</html>

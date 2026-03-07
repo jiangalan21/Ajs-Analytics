@@ -12,7 +12,7 @@ const sessionMiddleware = session({
     },
 });
 
-function loginRoute(pool) {
+function loginRoute(pool) { 
 
     return async (req, res) => {
 

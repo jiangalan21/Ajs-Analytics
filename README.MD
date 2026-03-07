@@ -1,5 +1,5 @@
 Alan Jiang
-I worked on this HW3 by myself.
+I worked on this HW4 by myself.
 
 Grader pass: 135grader
 Grader private key: b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZWQyNTUxOQAAACCVaaCNF0dEct7qYfv3DGL6ESWlFyolxNpkCZMs7FNJdwAAAKD9/h/A/f4f
@@ -8,11 +8,17 @@ AAAEBzHMl3P3kY/10HIiIP4sQ3BcVlRE2fg0WagAFr2TD005VpoI0XR0Ry3uph+/cMYvoR
 JaUXKiXE2mQJkyzsU0l3AAAAF2ppYW5nYWxhbkBBSlplbmJvb2sxNFgyAQIDBAUG
 No passphrase
 
-URL
-alanjiang.site
-IP: 157.245.184.146
+1. I created the login page on my reporting site. Submitting the form requests the API on the reporting domain, reverse proxy setup Apache routes the request to my api.js file Node.js instance which is a constantly run process on the server using PM2. This triggers the login endpoint, querying my PostgreSQL database, and verifying auth details. Node gets the output, sets a cookie for the client upon sucess, and then the browser gets sent to a dashboard page.
 
-Site USER/PASS details:
-a3jiang: awesome21
-grader: 135grader
+2. Upon reaching the dashboard page, the page automatically fires another request to Node instance to query database for performance data. The data gets returned as a JSON object and the script changes the context of a 'p' tag to display the raw formatted data.
+
+3. Importing ZingChart script, I took the raw inputted data and funneled it into basic bar charts to display the average load and ttfb times in ms for two different pages.
+
+URL
+https://www.reporting.alanjiang.site
+
+Auth
+username: admin
+password: password
+
 

@@ -1,4 +1,4 @@
-(function() {
+(async function() {
     'use strict';
 
     const endpoint = "https://www.collector.alanjiang.site/collect"
@@ -21,6 +21,26 @@
         set('sessionId', sid);
         return sid;
     })();
+
+    const { onLCP, onCLS, onINP, onFCP } = await import('https://unpkg.com/web-vitals@4.0.1/dist/web-vitals.attribution.js?module');
+
+    onLCP(metric => sendVital('lcp', metric.value));
+    onCLS(metric => sendVital('cls', metric.value));
+    onINP(metric => sendVital('inp', metric.value));
+    onFCP(metric => sendVital('fcp', metric.value));
+
+    function sendVital(name, value) {
+        if (!initialized) { 
+            // defer until after init
+            queue.push(() => sendVital(name, value));
+            return;
+        }
+        track('vital', {
+            sessionId: getSessionId(),   // same session ID from your existing script
+            name: name,
+            value: value
+        });
+    }
 
     function log(...args) {
         if (config.debug) {
@@ -91,8 +111,8 @@
             // TCP connection time
             tcpConnect: round(navEntry.connectEnd - navEntry.connectStart),
             // TLS handshake (HTTPS only)
-                tlsHandshake: navEntry.secureConnectionStart > 0
-                ? round(navEntry.connectEnd - navEntry.secureConnectionStart) : 0,
+            tlsHandshake: navEntry.secureConnectionStart > 0
+            ? round(navEntry.connectEnd - navEntry.secureConnectionStart) : 0,
             // Time to First Byte
             ttfb: round(navEntry.responseStart - navEntry.requestStart),
             // Download time (response)
@@ -112,7 +132,6 @@
             total: round(navEntry.loadEventEnd - navEntry.fetchStart)
         }
     }
-    
     
     function initErrorTracking() {
 
@@ -175,6 +194,8 @@
                 }, 0);
             });
         }
+        queue.forEach(fn => fn());
+        queue.length = 0;
     }
 
     function track(eventType, data) {
@@ -314,7 +335,7 @@
             title: document.title,
             referrer: document.referrer,
             timestamp: new Date().toISOString(),
-            type: "static_pageview",
+            type: "prefire",
             static: getStatic(),
             performance: (perfData && perfData.total > 0) ? perfData : "unavailable",
         }

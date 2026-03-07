@@ -14,6 +14,46 @@
     document.write(`Live @ ${new Date()}`);
   </script>
 
+  <h2>Login Form</h2>
+  <form id="login-form" action="/api/login" method="post">
+    <p>
+      <label for="username">Username:</label><br>
+      <input type="text" id="username" name="username">
+    </p>
+    <p>
+      <label for="password">Password:</label><br>
+      <input type="password" id="password" name="password">
+    </p>
+    <p>
+      <input type="submit" value="Log In">
+    </p>
+  </form>
+  <script>
+    const form = document.getElementById('login-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      try {
+        const response = await fetch(form.action, {
+          method: form.method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (data && data.success) {
+          window.location.href = 'dashboard.html';
+        } else {
+          alert('Login failed: ' + (data ? data.message : 'Unknown error'));
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+      }
+    });
+  </script>
+
+
 </body>
 
 </html>
