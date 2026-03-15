@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        <!-- <script> document.addEventListener('DOMContentLoaded', () => {if })</script> -->
+        <title>Tom Yumformance</title>
+        <script>
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    const response = await fetch('/api/check-sess')
+                    const data = await response.json();
+                        if(data.user.role === 'admin' || data.user.role === 'owner'){
+                            document.getElementById('admin-link').style.display = 'block';
+                        }
+                } catch(err) { console.error(err); }
+            });
+        </script>
+    </head>
+    <body>
+        <ul>
+            <li><a href="/protected/dashboard">Dashboard</a></li>
+            <li><a href="/protected/events">Events</a></li>
+            <li id="admin-link" style="display:none"><a href="/protected/admin">Admin</a></li>
+        </ul>
+
+        <h1>Tom Yumformance</h1>
+    </body>
+</html>

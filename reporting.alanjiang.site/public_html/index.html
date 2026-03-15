@@ -4,12 +4,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CSE 135 HW Lives!</title>
+  <title>Tom Yum</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const form = document.getElementById('login-form');
+      await fetch("/api/check-sess")
+      .then(response => {
+        if (response.status === 200){
+          window.location.href = '/protected/dashboard';
+        }
+      })
+      .catch(err => {console.error(err)});
+        
+      document.body.style.visibility = 'visible';
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        try {
+          const response = await fetch(form.action, {
+            method: form.method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await response.json();
+
+          if (data && data.success) {
+            window.location.href = '/protected/dashboard';
+          } else {
+            alert('Login failed: ' + (data ? data.message : 'Unknown error'));
+          }
+        } catch (err) {
+          console.error('Login error:', err);
+        }
+      });
+    });
+  </script>
 </head>
 
 <body>
-  <h1>CSE 135 HW1 Lives!</h1>
-  <h2>reporting.alanjiang.site</h2>
+  <style>body { visibility: hidden; }</style>
+  <h1>Tom Yum Kha!</h1>
+  <h2>Are you Tom Yum?</h2>
   <script>
     document.write(`Live @ ${new Date()}`);
   </script>
@@ -17,8 +53,8 @@
   <h2>Login Form</h2>
   <form id="login-form" action="/api/login" method="post">
     <p>
-      <label for="username">Username:</label><br>
-      <input type="text" id="username" name="username">
+      <label for="email">Email:</label><br>
+      <input type="text" id="email" name="email">
     </p>
     <p>
       <label for="password">Password:</label><br>
@@ -28,30 +64,6 @@
       <input type="submit" value="Log In">
     </p>
   </form>
-  <script>
-    const form = document.getElementById('login-form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      try {
-        const response = await fetch(form.action, {
-          method: form.method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await response.json();
-
-        if (data && data.success) {
-          window.location.href = 'dashboard.html';
-        } else {
-          alert('Login failed: ' + (data ? data.message : 'Unknown error'));
-        }
-      } catch (err) {
-        console.error('Login error:', err);
-      }
-    });
-  </script>
 
 
 </body>

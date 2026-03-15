@@ -156,12 +156,13 @@ app.post('/collect', async (req, res) => {
                 WHERE session_id = $2 AND url = $3`,
                 [payload.value, payload.sessionId, payload.url]
             );
+            res.sendStatus(204);
         } catch (err) {
             console.error('DB update error: ', err.message)
             return res.status(500);
         }
     }
-    res.sendStatus(204);
+    
 });
 
 

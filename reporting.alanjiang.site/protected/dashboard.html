@@ -4,17 +4,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CSE 135 HW Lives!</title>
+  <title>Tom Yum Board</title>
   <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
 </head>
 
 <body>
-  <h1>CSE 135 HW4 Lives!</h1>
-  <h2>reporting.alanjiang.site dashboard</h2>
+  <ul>
+    <li><a href="/protected/performance">Performance</a></li>
+    <li><a href="/protected/events">Events</a></li>
+    <li id="admin-link" style="display:none"><a href="/protected/admin">Admin</a></li>
+  </ul>
+  <h1>Welcome back Tom Yum!</h1>
+  <h2>Tom Yum Khave</h2>
   <script>
     document.write(`Live @ ${new Date()}`);
   </script>
-  <h2>Dashboard Data</h2>
+  <h2>Tom Yum Data</h2>
   <table id="performance-table">
     <thead>
       <tr>
@@ -34,16 +39,22 @@
   <div id="loadChart"></div>
   <div id="ttfbChart"></div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       try {
-          fetch("/api/performance", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        })
-        .then(response => response.json())
-        .then(payload => {
+        const response = await fetch('/api/check-sess')
+        const data = await response.json() 
+        if(data.user.role === 'admin' || data.user.role === 'owner'){
+          document.getElementById('admin-link').style.display = 'block';
+        }
+      } catch(err) { console.error(err); }
+      
+      try {
+          const reponse = await fetch("/api/performance", {
+            method: "GET",
+            headers: {"Content-Type": "application/json"}
+          });
+          const payload = await response.json();
+
           const home = payload.data[0];
           const query = payload.data[1];
           const tbody = document.getElementById("performance-tbody");
@@ -152,11 +163,8 @@
             id: 'ttfbChart',
             data: ttfbConfig,
           });
-        });
-      } catch (err) {
-        console.error("Error fetching performance data:", err);
-      }
-      //TODO: figure out how to block access to the whole page if not logged in
+      } catch (err) { console.error("Error fetching performance data:", err); }
+
     });
   </script>
   <button id="logout-button">Logout</button>
@@ -173,9 +181,7 @@
         } else {
           alert('Logout failed: ' + (data ? data.message : 'Unknown error'));
         }
-      } catch (err) {
-        console.error('Logout error:', err);
-      }
+      } catch (err) { console.error('Logout error:', err); }
     });
   </script>
 </body>

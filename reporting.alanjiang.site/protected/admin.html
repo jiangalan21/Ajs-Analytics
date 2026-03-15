@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tom Yum Chuds</title>
+        <script>
+            async function fillUsers() {
+                const response = await fetch('/api/users');
+                const payload = await response.json();
+                const tbody = document.getElementById('users-tbody');
+                tbody.innerHTML = '';
+                console.log(payload);
+                payload.data.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.email}</td>
+                        <td>${user.display_name}</td>
+                        <td>${user.role}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+            document.addEventListener("DOMContentLoaded", async () => {
+
+                try { fillUsers(); } catch(err) { console.error("User fetch error:", err.message); }
+
+                const form = document.getElementById('add-user-form')
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('new-email').value;
+                    const display_name = document.getElementById('new-name').value;
+                    const password = document.getElementById('new-password').value;
+                    const role = document.getElementById('new-role').value;
+                    try {
+                        const response = await fetch(form.action, {
+                            method: form.method,
+                            headers: {'Content-Type' : 'application/json'},
+                            body: JSON.stringify({ email, display_name, password, role })
+                        });
+                        const data = await response.json();
+                        if (data && data.success){ fillUsers(); }
+                    } catch(err){ console.log(err) }
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <ul>
+            <li><a href="/protected/dashboard">Dashboard</a></li>
+            <li><a href="/protected/performance">Performance</a></li>
+            <li><a href="/protected/events">Events</a></li>
+        </ul>
+        <h1>Welcome, Chud Admin</h1>
+
+        <h2>Chud Table</h2>
+        <form id="add-user-form" action="/api/users" method="post">
+            <input type="email" id="new-email" placeholder="Email" required>
+            <input type="text" id="new-name" placeholder="Display Name" required>
+            <input type="password" id="new-password" placeholder="Password" required>
+            <select id="new-role">
+                <option value="viewer">Viewer</option>
+                <option value="analyst">Analyst</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit">Add Chud</button>
+        </form>
+
+    <table id="users-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Display Name</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="users-tbody"></tbody>
+  </table>
+    </body>
+</html>

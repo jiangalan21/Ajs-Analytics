@@ -1,14 +1,20 @@
 const express = require('express');
-const { sessionMiddleware, requireAuth } = require('./auth');
+const { sessionMiddleware, requireAuth, requireRole} = require('./auth');
 const { Pool } = require('pg');
 const { loginRoute, logoutRoute } = require('./auth');
+const path = require('path');
+const adminRouter = require('./admin_api');
 
 const app = express();
 const PORT = 3007;
+const domainDir = '/var/www/reporting.alanjiang.site'
 
-app.use(sessionMiddleware);
 app.use(express.json());
+app.use(sessionMiddleware);
+app.use(adminRouter);
 
+
+//cors
 app.use((req, res, next) => {
     const origin = 'http://www.reporting.alanjiang.site';
     res.header('Access-Control-Allow-Origin', origin);
@@ -19,7 +25,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 const pool = new Pool({
     host: '127.0.0.1',
     port: 5432,
@@ -27,26 +32,25 @@ const pool = new Pool({
     user: 'postgres',
     password: 'awesome21'
 });
+app.set('pool', pool);
 
 function getDateRange(query) {
     const end = query.end || new Date().toISOString().slice(0, 10);
     const start = query.start || new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
     return [start + ' 00:00:00+00', end + ' 23:59:59+00'];
 }
-    
+
+
 app.post('/api/login', loginRoute(pool));
 
 app.post('/api/logout', logoutRoute);
 
-app.get('/api/dashboard', requireAuth, (req, res) => {
-    requireAuth(req, res, async () => {
-        try {
-            res.json({data: 'This is dashboard data'});
-        } catch (err) {
-            console.error('Error fetching dashboard data:', err);
-            res.status(500).json({ error: 'Failed to fetch dashboard data' });
-        }
-    });
+app.get('/protected/:page', requireAuth, (req, res) => {
+    res.sendFile(path.join(domainDir, 'protected', req.params.page + '.html'));
+});
+
+app.get('/api/check-sess', requireAuth, (req,res) => {
+    res.status(200).json({ success: true, user: req.session.user });
 });
 
 app.get('/api/performance', requireAuth, async (req, res) => {
@@ -79,6 +83,7 @@ app.get('/api/events', async (req, res) => {
     res.json(rows);
   } catch (err) { res.status(500).json({ error: 'Failed to fetch events' }); }
 });
+
 
 
 
