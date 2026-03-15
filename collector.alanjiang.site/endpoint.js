@@ -8,7 +8,7 @@ const PORT = 3000;
 const LOG_FILE = path.join(__dirname, 'analytics.jsonl');
 
 
-//REMEMBER TO CHANGE APACHE CONF FOR NEW ENDPOINTS; ***YOU WILL CORS ERROR WITHOUT THIS***
+// REMEMBER TO CHANGE APACHE CONF FOR NEW ENDPOINTS; ***YOU WILL CORS ERROR WITHOUT THIS***
 // CORS middleware
 app.use((req, res, next) => {
   const origin = 'https://www.test.alanjiang.site';
@@ -34,6 +34,7 @@ const pool = new Pool({
     user: 'postgres',
     password: 'awesome21',
 });
+
 
 //Create table if it doesn't exist
 async function initDB() {

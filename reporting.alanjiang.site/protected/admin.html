@@ -6,22 +6,82 @@
         <title>Tom Yum Chuds</title>
         <script>
             async function fillUsers() {
-                const response = await fetch('/api/users');
+                const response = await fetch('/api/users', { credentials: 'include' });
                 const payload = await response.json();
                 const tbody = document.getElementById('users-tbody');
                 tbody.innerHTML = '';
-                console.log(payload);
                 payload.data.forEach(user => {
                     const tr = document.createElement('tr');
+                    tr.dataset.id = user.id;
                     tr.innerHTML = `
                         <td>${user.id}</td>
-                        <td>${user.email}</td>
-                        <td>${user.display_name}</td>
-                        <td>${user.role}</td>
+                        <td class="cell-email">${user.email}</td>
+                        <td class="cell-name">${user.display_name}</td>
+                        <td class="cell-role">${user.role}</td>
+                        <td>
+                            <button onclick="editRow(this)">Update</button>
+                            <button onclick="deleteUser(${user.id})">Delete</button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
+            function editRow(btn) {
+                const tr = btn.closest('tr');
+                const id = tr.dataset.id;
+
+                const email = tr.querySelector('.cell-email').textContent;
+                const name = tr.querySelector('.cell-name').textContent;
+                const role = tr.querySelector('.cell-role').textContent;
+
+                tr.querySelector('.cell-email').innerHTML = `<input type="email" value="${email}">`;
+                tr.querySelector('.cell-name').innerHTML = `<input type="text" value="${name}">`;
+                tr.querySelector('.cell-role').innerHTML = `
+                    <select>
+                        <option value="viewer" ${role === 'viewer' ? 'selected' : ''}>Viewer</option>
+                        <option value="analyst" ${role === 'analyst' ? 'selected' : ''}>Analyst</option>
+                        <option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option>
+                    </select>`;
+
+                const actionsTd = tr.querySelector('td:last-child');
+                actionsTd.innerHTML = `
+                    <input type="password" placeholder="New password (optional)">
+                    <button onclick="saveUser(this, ${id})">Save</button>
+                    <button onclick="fillUsers()">Cancel</button>
+                `;
+            }
+            async function saveUser(btn, id) {
+                const tr = btn.closest('tr');
+                const email = tr.querySelector('.cell-email input').value;
+                const display_name = tr.querySelector('.cell-name input').value;
+                const role = tr.querySelector('.cell-role select').value;
+                const password = tr.querySelector('td:last-child input[type="password"]').value;
+
+                const body = { email, display_name, role };
+                if (password) body.password = password;
+
+                try {
+                    const response = await fetch(`/api/users/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(body)
+                    });
+                    const data = await response.json();
+                    if (!response.ok) { throw data; }
+                    if (data && data.success) { fillUsers(); }
+                } catch(err) { console.error(err.error); }
+            }
+
+            async function deleteUser(id) {
+                if (!confirm('Delete this chud?')) return;
+                try {
+                    const response = await fetch(`/api/users/${id}`, { method: 'DELETE', credentials: 'include'});
+                    const data = await response.json();
+                    if (data && data.success) { fillUsers(); }
+                } catch(err) { console.error(err); }
+            }
+
             document.addEventListener("DOMContentLoaded", async () => {
 
                 try { fillUsers(); } catch(err) { console.error("User fetch error:", err.message); }
@@ -37,6 +97,7 @@
                         const response = await fetch(form.action, {
                             method: form.method,
                             headers: {'Content-Type' : 'application/json'},
+                            credentials: 'include',
                             body: JSON.stringify({ email, display_name, password, role })
                         });
                         const data = await response.json();
@@ -48,7 +109,7 @@
     </head>
     <body>
         <ul>
-            <li><a href="/protected/dashboard">Dashboard</a></li>
+            <li><a href ="/protected/dashboard">Dashboard</a></li>
             <li><a href="/protected/performance">Performance</a></li>
             <li><a href="/protected/events">Events</a></li>
         </ul>
@@ -56,8 +117,11 @@
 
         <h2>Chud Table</h2>
         <form id="add-user-form" action="/api/users" method="post">
+            <label for="new-email">Email</label>
             <input type="email" id="new-email" placeholder="Email" required>
+            <label for="new-name">Display Name</label>
             <input type="text" id="new-name" placeholder="Display Name" required>
+            <label for="new-password">Password</label>
             <input type="password" id="new-password" placeholder="Password" required>
             <select id="new-role">
                 <option value="viewer">Viewer</option>

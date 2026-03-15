@@ -10,20 +10,20 @@ const PORT = 3007;
 const domainDir = '/var/www/reporting.alanjiang.site'
 
 app.use(express.json());
-app.use(sessionMiddleware);
-app.use(adminRouter);
-
 
 //cors
 app.use((req, res, next) => {
     const origin = 'http://www.reporting.alanjiang.site';
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
 });
+
+app.use(sessionMiddleware);
+app.use(adminRouter);
 
 const pool = new Pool({
     host: '127.0.0.1',

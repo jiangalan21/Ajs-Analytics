@@ -27,7 +27,7 @@ function loginRoute(pool) {
 
         try {
             const { rows } = await pool.query(
-              'SELECT id, email, password_hash, role FROM users WHERE email = $1', 
+              'SELECT id, email, display_name, password_hash, role FROM users WHERE email = $1', 
               [email]
             );
             if (rows.length === 0) {
@@ -89,6 +89,9 @@ function requireAuth(req, res, next) {
 
 function requireRole(...roles) {
     return (req, res, next) => {
+        // console.log('user role:', req.session.user.role);
+        // console.log('allowed roles:', roles);
+        // console.log('includes:', roles.includes(req.session.user.role));
         if (!req.session.user || !roles.includes(req.session.user.role)) {
             return res.status(403).json({
                 success: false,
