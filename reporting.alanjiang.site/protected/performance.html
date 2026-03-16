@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
+        <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
         <!-- <script> document.addEventListener('DOMContentLoaded', () => {if })</script> -->
         <title>Tom Yumformance</title>
         <script>
@@ -20,11 +20,239 @@
     </head>
     <body>
         <ul>
-            <li><a href="/protected/dashboard">Dashboard</a></li>
-            <li><a href="/protected/events">Events</a></li>
-            <li id="admin-link" style="display:none"><a href="/protected/admin">Admin</a></li>
+            <li><a href="/api/dashboard">Dashboard</a></li>
+            <li><a href="/api/events">Events</a></li>
+            <li><a href="/api/pageviews">Pageviews</a></li>
+            <li id="admin-link" style="display:none"><a href="/api/admin">Admin</a></li>
         </ul>
 
         <h1>Tom Yumformance</h1>
+
+        <table id="performance-table">
+            <thead>
+            <tr>
+                <th>URL</th>
+                <th>Avg Load (ms)</th>
+                <th>Avg TTFB (ms)</th>
+                <th>Samples</th>
+            </tr>
+            </thead>
+            <tbody id="performance-tbody">
+            </tbody>
+        </table>
+        <br></br>
+        <div style="display: flex; gap: 60px; width: 80%; margin: 0 auto;">
+            <div id="loadChart1" style="flex: 1; min-width: 0;"></div>
+            <div id="loadChart2" style="flex: 1; min-width: 0;"></div>
+            
+        </div>
+        <div style="margin: 0 auto;">
+            <label for="start-time-1">Range 1 Start:</label>
+            <input id="start-time-1" type="datetime-local" step="0.001"/>
+            <label for="end-time-1">Range 1 End:</label>
+            <input id="end-time-1" type="datetime-local" step="0.001"/>
+            <label for="start-time-2">Range 2 Start:</label>
+            <input id="start-time-2" type="datetime-local" step="0.001"/>
+            <label for="end-time-2">Range 2 End:</label>
+            <input id="end-time-2" type="datetime-local" step="0.001"/>
+
+            <button id="re-fetch">Re-fetch</button>
+        </div>
+        <!-- report-box.html -->
+
+        <div id="report-display"></div>
+
+        <div id="report-box">
+            <textarea id="report-input" placeholder="Write your analysis..."></textarea>
+            <button id="report-submit">Submit</button>
+        </div>
+
+        <script>
+            const category = 'performance'; // change per page
+            document.addEventListener('DOMContentLoaded', async () => {
+                    
+                document.getElementById('re-fetch').addEventListener('click', async () => {
+                    try {
+                        console.log('hello');
+                        const start1 = document.getElementById('start-time-1').value.replace('T', ' ') + '+00';
+                        const end1 = document.getElementById('end-time-1').value.replace('T', ' ') + '+00';
+                        const start2 = document.getElementById('start-time-2').value.replace('T', ' ') + '+00';
+                        const end2 = document.getElementById('end-time-2').value.replace('T', ' ') + '+00';
+                        console.log(start1,end1,start2,end2);
+                        const response = await fetch("/api/performanceData", {
+                            method: "POST",
+                            headers: {"Content-Type": "application/json"},
+                            body: JSON.stringify({start1, end1, start2, end2})
+                        });
+                        const payload = await response.json();
+
+                        const newData1 = payload.rows1[0];
+                        const newData2 = payload.rows2[0];
+                        
+
+                        
+                    } catch(err) {
+                        
+                    }
+                });
+                // get dashboard data
+                try {
+                    const response = await fetch("/api/performance_data", {
+                        method: "GET",
+                        headers: {"Content-Type": "application/json"}
+                    });
+                    const payload = await response.json();
+
+
+                    // set table data
+                    const home = payload.data[0];
+                    const btn = payload.data[1];
+
+                    //make two
+
+                    const tbody = document.getElementById("performance-tbody");
+                    payload.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                        <td>${row.url}</td>
+                        <td>${row.avg_load_ms}</td>
+                        <td>${row.avg_ttfb_ms}</td>
+                        <td>${row.samples}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    
+
+
+                    // render charts
+                    let loadConfig1 = {
+                            type: 'bar',
+                            title: {
+                            text: 'Average Load Time in Milliseconds (ms) by page',
+                            fontSize: 18,
+                            },
+                            legend: {
+                                'vertical-align' : 'middle',
+                                draggable: true
+                            },
+                            scaleX: {
+                            // Set scale label
+                            label: { text: 'Sites' },
+                            // Convert text on scale indices 
+                            labels: ['avg-load-time']
+                            },
+                            scaleY: { 
+                            // Scale label with unicode character 
+                            label: { text: 'ms' } },
+                            plot: { 
+                                // Animation docs here: 
+                                // https://www.zingchart.com/docs/tutorials/styling/animation#effect
+                                animation: { 
+                                effect: 'ANIMATION_EXPAND_BOTTOM',
+                                method: 'ANIMATION_STRONG_EASE_OUT',
+                                sequence: 'ANIMATION_BY_NODE',
+                                speed: 275,
+                                } 
+                            },
+                            series: [ 
+                            {
+                                // plot 1 values, linear data 
+                                values: [home.avg_load_ms],
+                                text: 'Home Page',
+                            },
+                            {
+                                // plot 2 values, linear data
+                                values: [btn.avg_load_ms],
+                                text: 'Buttons Page'
+                            }
+                            ]
+                        };
+                    zingchart.render({
+                        id: 'loadChart1',
+                        data: loadConfig1,
+                    });
+                    let loadConfig2 = {
+                        type: 'bar',
+                        title: {
+                        text: 'Average Load Time in Milliseconds (ms) by page',
+                        fontSize: 18,
+                        },
+                        legend: {
+                            'vertical-align' : 'middle',
+                        draggable: true,
+                        },
+                        scaleX: {
+                        // Set scale label
+                        label: { text: 'Sites' },
+                        // Convert text on scale indices 
+                        labels: ['avg-load-time']
+                        },
+                        scaleY: { 
+                        // Scale label with unicode character 
+                        label: { text: 'ms' } },
+                        plot: { 
+                            // Animation docs here: 
+                            // https://www.zingchart.com/docs/tutorials/styling/animation#effect
+                            animation: { 
+                            effect: 'ANIMATION_EXPAND_BOTTOM',
+                            method: 'ANIMATION_STRONG_EASE_OUT',
+                            sequence: 'ANIMATION_BY_NODE',
+                            speed: 275,
+                            } 
+                        },
+                        series: [ 
+                        {
+                            // plot 1 values, linear data 
+                            values: [home.avg_load_ms],
+                            text: 'Home Page',
+                        },
+                        {
+                            // plot 2 values, linear data
+                            values: [btn.avg_load_ms],
+                            text: 'Buttons Page'
+                        }
+                        ]
+                    };
+                    zingchart.render({
+                        id: 'loadChart2',
+                        data: loadConfig2,
+                    });
+                } catch (err) { console.error("Error fetching performance data:", err); }
+            })
+
+
+            // Fetch and render the most recent report on page load
+            async function loadReport() {
+                const response = await fetch(`/api/${category}/report`);
+                const { report } = await response.json();
+                const el = document.getElementById('report-display');
+                if (!report) {
+                    el.textContent = 'No reports yet.';
+                    return;
+                }
+                el.innerHTML = `
+                    <p><strong>${report.author.displayName}</strong> — ${new Date(report.createdAt).toLocaleString()}</p>
+                    <p>${report.analysis}</p>
+                `;
+            }
+
+            // Submit a new report
+            document.getElementById('report-submit').addEventListener('click', async () => {
+                const analysis = document.getElementById('report-input').value.trim();
+                if (!analysis) return;
+                await fetch(`/api/${category}/report`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ analysis }),
+                });
+                document.getElementById('report-input').value = '';
+                loadReport();
+            });
+
+            loadReport();
+        </script>
+
+
+
     </body>
 </html>

@@ -2,10 +2,12 @@ const express = require('express');
 const { requireAuth, requireRole } = require('./auth');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const path = require('path');
+const domainDir = '/var/www/reporting.alanjiang.site';
 
 //get admin page
 router.get('/api/admin', requireAuth, requireRole('admin', 'owner'), (req, res) => {
-    res.sendFile(path.join(domainDir, 'protected', req.params.page + '.html'));
+    res.sendFile(path.join(domainDir, 'protected', 'admin.html'));
 });
 
 

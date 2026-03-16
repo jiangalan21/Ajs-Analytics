@@ -9,16 +9,42 @@
 </head>
 
 <body>
+  <!--Nav-->
   <ul>
-    <li><a href="/protected/performance">Performance</a></li>
-    <li><a href="/protected/events">Events</a></li>
-    <li id="admin-link" style="display:none"><a href="/protected/admin">Admin</a></li>
+    <li id="performance-link" style="display:none"><a href="/api/performance">Performance</a></li>
+    <li id="events-link" style="display:none"><a href="/api/events">Events</a></li>
+    <li id="pageviews-link" style="display:none"><a href="/api/pageviews">Pageviews</a></li>
+    <li id="admin-link" style="display:none"><a href="/api/admin">Admin</a></li>
   </ul>
+
+
+  <!--Hero-->
   <h1 id="welcome-title"></h1>
   <h2>Tom Yum Khave</h2>
+  <button id="logout-button">Logout</button>
+  <script>
+    //logout button script
+    document.getElementById('logout-button').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        if (data && data.success) {
+          window.location.href = '/';
+        } else {
+          alert('Logout failed: ' + (data ? data.message : 'Unknown error'));
+        }
+      } catch (err) { console.error('Logout error:', err); }
+    });
+  </script>
   <script>
     document.write(`Live @ ${new Date()}`);
   </script>
+
+
+  <!--Table + Charts-->
   <h2>Tom Yum Data</h2>
   <table id="performance-table">
     <thead>
@@ -32,7 +58,6 @@
       </tr>
     </thead>
     <tbody id="performance-tbody">
-      <!-- rows injected here -->
     </tbody>
   </table>
   <br></br>
@@ -40,25 +65,39 @@
   <div id="ttfbChart"></div>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
+
+
+      //check role
       try {
         const response = await fetch('/api/check-sess')
         const data = await response.json() 
         if(data.user.role === 'admin' || data.user.role === 'owner'){
           document.getElementById('admin-link').style.display = 'block';
+          document.getElementById('performance-link').style.display = 'block';
+          document.getElementById('events-link').style.display = 'block';
+          document.getElementById('pageviews-link').style.display = 'block';
         }
-        console.log(data);
+        if(data.user.role === 'analyst') {
+          document.getElementById('performance-link').style.display = 'block';
+          document.getElementById('events-link').style.display = 'block';
+          document.getElementById('pageviews-link').style.display = 'block';
+        }
         document.getElementById('welcome-title').textContent = `Welcome, ${data.user.username}`;
       } catch(err) { console.error(err); }
       
+
+      // get dashboard data
       try {
-          const response = await fetch("/api/performance", {
+          const response = await fetch("/api/performance_data", {
             method: "GET",
             headers: {"Content-Type": "application/json"}
           });
           const payload = await response.json();
 
+
+          // set table data
           const home = payload.data[0];
-          const query = payload.data[1];
+          const btn = payload.data[1];
           const tbody = document.getElementById("performance-tbody");
           payload.data.forEach(row => {
             const tr = document.createElement('tr');
@@ -74,6 +113,8 @@
           });
           const sites = ['avg_load_ms', 'avg_ttfb_ms'];
 
+
+          // render charts
           let loadConfig = {
                 type: 'bar',
                 title: {
@@ -110,8 +151,8 @@
                   },
                   {
                     // plot 2 values, linear data
-                    values: [query.avg_load_ms],
-                    text: 'Query'
+                    values: [btn.avg_load_ms],
+                    text: 'Button'
                   }
                 ]
               };
@@ -119,7 +160,6 @@
             id: 'loadChart',
             data: loadConfig,
           });
-
           let ttfbConfig = {
             type: 'bar',
             title: {
@@ -156,8 +196,8 @@
               },
               {
                 // plot 2 values, linear data
-                values: [query.avg_ttfb_ms],
-                text: 'Query'
+                values: [btn.avg_ttfb_ms],
+                text: 'Button'
               }
             ]
           };
@@ -166,24 +206,6 @@
             data: ttfbConfig,
           });
       } catch (err) { console.error("Error fetching performance data:", err); }
-
-    });
-  </script>
-  <button id="logout-button">Logout</button>
-  <script>
-    document.getElementById('logout-button').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/api/logout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        const data = await response.json();
-        if (data && data.success) {
-          window.location.href = '/';
-        } else {
-          alert('Logout failed: ' + (data ? data.message : 'Unknown error'));
-        }
-      } catch (err) { console.error('Logout error:', err); }
     });
   </script>
 </body>

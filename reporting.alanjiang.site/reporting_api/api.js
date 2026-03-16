@@ -4,6 +4,9 @@ const { Pool } = require('pg');
 const { loginRoute, logoutRoute } = require('./auth');
 const path = require('path');
 const adminRouter = require('./admin_api');
+const performanceRouter = require('./performance_api');
+const eventsRouter = require('./events_api');
+const pageviewRouter = require('./pageviews_api');
 
 const app = express();
 const PORT = 3007;
@@ -24,6 +27,10 @@ app.use((req, res, next) => {
 
 app.use(sessionMiddleware);
 app.use(adminRouter);
+app.use(performanceRouter);
+app.use(eventsRouter);
+app.use(pageviewRouter);
+
 
 const pool = new Pool({
     host: '127.0.0.1',
@@ -45,15 +52,16 @@ app.post('/api/login', loginRoute(pool));
 
 app.post('/api/logout', logoutRoute);
 
-app.get('/protected/:page', requireAuth, (req, res) => {
-    res.sendFile(path.join(domainDir, 'protected', req.params.page + '.html'));
+app.get('/api/dashboard', requireAuth, (req, res) => {
+    res.sendFile(path.join(domainDir, 'protected', 'dashboard.html'));
 });
 
 app.get('/api/check-sess', requireAuth, (req,res) => {
     res.status(200).json({ success: true, user: req.session.user });
 });
 
-app.get('/api/performance', requireAuth, async (req, res) => {
+
+app.get('/api/performance_data', requireAuth, async (req, res) => {
     try {
         const [start, end] = getDateRange(req.query);
         const { rows } = await pool.query(

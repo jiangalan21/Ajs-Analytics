@@ -11,7 +11,7 @@
       await fetch("/api/check-sess")
       .then(response => {
         if (response.status === 200){
-          window.location.href = '/protected/dashboard';
+          window.location.href = '/api/dashboard';
         }
       })
       .catch(err => {console.error(err)});
@@ -30,7 +30,7 @@
           const data = await response.json();
 
           if (data && data.success) {
-            window.location.href = '/protected/dashboard';
+            window.location.href = '/api/dashboard';
           } else {
             alert('Login failed: ' + (data ? data.message : 'Unknown error'));
           }
