@@ -36,7 +36,7 @@ https://www.reporting.alanjiang.site
 <br></br>
 Login:
 <br></br>
-* * Email         Pass         Role
+Email         Pass         Role
 <br></br>
 * chud@boss.com 123123123    owner
 <br></br>
