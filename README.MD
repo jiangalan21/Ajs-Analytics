@@ -24,7 +24,8 @@ Grader private key:
 ### URL
 Repo Link: https://github.com/a3jiang/digitalocean135
 <br></br>
-Domains: https://www.alanjiang.site\
+Domains: https://www.alanjiang.site
+<br></br>
 Login
 - username: admin
 - password: password
@@ -33,10 +34,15 @@ https://www.collector.alanjiang.site
 https://www.test.alanjiang.site
 https://www.reporting.alanjiang.site
 Login:
+<br></br>
 Email         Pass         Role
+<br></br>
 chud@boss.com 123123123    owner
+<br></br>
 chud@1.com    123123123    admin
+<br></br>
 view@1.com    123123123    viewer
+<br></br>
 anal@1.com    123123123    analyst
 
 
