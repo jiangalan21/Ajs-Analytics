@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gay Bowl</title>
+        <h1>gay bowl</h1>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('question-form');
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault()
+                    try {
+                        const res = await fetch('/submit', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ data: 'hello' })
+                        });
+                        const payload = await res.json()
+                        document.getElementById('something').textContent = payload.data;
+                    } catch (err) {
+                        console.error(err);
+                    }
+
+                });
+            });
+            
+        </script>
+    </head>
+
+    <body>
+        <div id="daily">
+            <h1>Question of the Day:</h1>
+            <p id="something">something</p>
+            <br></br>
+            <form id="question-form">
+                <div id="submission">
+                </div>
+                <input type="submit"/>
+            </form>    
+        </div>
+    </body>
+</html>
