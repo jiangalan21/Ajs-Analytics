@@ -8,6 +8,7 @@
      - gather real data for the company, favorite bases? favorite toppings?
      - fun daily trivia/interaction for rewards
    - ask management to maybe use it to gain more customers by with free reward incentive
+     - give more precedence to applicants who fill out more questions of the days
      - I can put this on resume, real project with actionable results for the company, _**own initiative**_
      - can lowkey optimize this for all stores by putting it on the main website, _**ask on slack about site**_
 
