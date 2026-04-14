@@ -12,16 +12,6 @@
      - I can put this on resume, real project with actionable results for the company, _**own initiative**_
      - can lowkey optimize this for all stores by putting it on the main website, _**ask on slack about site**_
 
-### DigitalOcean
-Grader pass: 135grader
-Grader private key:   
-   b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZWQyNTUxOQAAACCVaaCNF0dEct7qYfv3DGL6ESWlFyolxNpkCZMs7FNJdwAAAKD9/h/A/f4f
-   wAAAAAtzc2gtZWQyNTUxOQAAACCVaaCNF0dEct7qYfv3DGL6ESWlFyolxNpkCZMs7FNJdw
-   AAAEBzHMl3P3kY/10HIiIP4sQ3BcVlRE2fg0WagAFr2TD005VpoI0XR0Ry3uph+/cMYvoR
-   JaUXKiXE2mQJkyzsU0l3AAAAF2ppYW5nYWxhbkBBSlplbmJvb2sxNFgyAQIDBAUG
-   No passphrase
-
-
 ### URL
 Repo Link: https://github.com/a3jiang/digitalocean135
 <br></br>
