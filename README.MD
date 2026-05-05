@@ -1,4 +1,4 @@
-# Welcome to alanjiang.site, <br></br>
+# Welcome to alanjiang.site,
 # Home of Alan Jiang's Fullstack Development Sandbox Repository
 
 ### All things exploration for fullstack technologies
