@@ -1,5 +1,6 @@
 # Welcome to alanjiang.site,
-# Home of Alan Jiang's Fullstack Development Sandbox Repository
+<br></br>
+Home of Alan Jiang's Fullstack Development Sandbox Repository
 
 ### All things exploration for fullstack technologies
 - Stack: HTML, CSS, JS, Node.js, Express, DigitalOcean Droplet (VM), Linux, Apache, PostgreSQL
